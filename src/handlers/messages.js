@@ -470,6 +470,7 @@ class AnthropicStreamTransform {
   _openTextBlock() {
     if (this.textBlockIdx != null) return;
     this._closeThinkingBlock();
+    this._closeAllToolBlocks();
     this.textBlockIdx = this.nextBlockIdx++;
     this._sendEvent('content_block_start', {
       index: this.textBlockIdx,
@@ -485,6 +486,8 @@ class AnthropicStreamTransform {
 
   _openThinkingBlock() {
     if (this.thinkingBlockIdx != null) return;
+    this._closeAllToolBlocks();
+    this._closeTextBlock();
     this.thinkingBlockIdx = this.nextBlockIdx++;
     this._sendEvent('content_block_start', {
       index: this.thinkingBlockIdx,
@@ -502,6 +505,7 @@ class AnthropicStreamTransform {
     if (this.toolBlockByOaiIdx.has(oaiIdx)) return this.toolBlockByOaiIdx.get(oaiIdx);
     this._closeThinkingBlock();
     this._closeTextBlock();
+    this._closeAllToolBlocks();
     const idx = this.nextBlockIdx++;
     this.toolBlockByOaiIdx.set(oaiIdx, idx);
     this._sendEvent('content_block_start', {
